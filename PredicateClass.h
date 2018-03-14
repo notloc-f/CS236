@@ -9,12 +9,25 @@ public:
   void Clear();
   vector<ParameterClass> GetPred();
   string PrintPredicate();
+  string getID();
   void AddParam(ParameterClass temp);
+  vector<string> allParams();
   PredicateClass(string IDing,vector<ParameterClass> listPar);
 private:
   string IDer;
   vector<ParameterClass> list;
 };
+string PredicateClass::getID(){
+  return IDer;
+}
+vector<string> PredicateClass::allParams(){
+  vector<string> paramer;
+  for(unsigned i =0; i <list.size(); i++){
+    cout << "adding " << list.at(i).GetString();
+    paramer.push_back(list.at(i).GetString());
+  }
+  return paramer;
+}
 vector<ParameterClass> PredicateClass::GetPred(){
 
   return list;

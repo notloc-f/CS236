@@ -3,7 +3,6 @@
 
 class Schemes: public vector<string> {
 public:
-
 private:
 
 };

@@ -19,6 +19,7 @@ public:
   datalog();
   datalog(vector<Token> intial);
   string ToString();
+  void Transfer();
   void Begin();
   void Match(TOLKTYP typy);
   string test(unsigned int i);
@@ -343,10 +344,32 @@ else{
 //  cout << "THROWING HERE3" << endl;
   throw(tokStack.back());
 }
-Database nextStep;
-nextStep.practice();
+Transfer();
 }
 string datalog::test(unsigned int j){
   return tokStack.at(j).PrintToken();
+}
+
+
+
+void datalog::Transfer(){
+  Database nextStep;
+  nextStep.practice();
+  for(unsigned i =0; i < Schemess.size(); i++){
+    vector<string> lister;
+    string name;
+    lister = Schemess.at(i).allParams();
+    name = Schemess.at(i).getID();
+    nextStep.AddRelation(name,lister);
+
+  }
+
+
+
+
+
+
+
+
 }
 #endif /* DATALOG_CPP*/
