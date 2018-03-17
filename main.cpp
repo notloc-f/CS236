@@ -332,7 +332,7 @@ void Identifier(){
 			temp.CreateToken(typer,beginLine,Identity);//USED TO BE lineNum -1
 			Tokens.push_back(temp);
 	//		cout << "\" " << Identity << "\" Got created Here 1" << endl;
-			//cout << "Adding: " << Identity << " ;";
+
 			Identity="";
 			IDbegin=true;
 

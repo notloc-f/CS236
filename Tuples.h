@@ -3,7 +3,7 @@
 
 class Tuples: public vector<string> {
 	public:
-
+		
 	private:
 
 };

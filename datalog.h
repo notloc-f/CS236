@@ -19,6 +19,8 @@ public:
   datalog();
   datalog(vector<Token> intial);
   string ToString();
+  void Querator();
+  void Factor();
   void Transfer();
   void Begin();
   void Match(TOLKTYP typy);
@@ -59,6 +61,7 @@ private:
   vector<PredicateClass> Queriess;
   vector<RuleClass> Ruless;
   set <string> Domainss;
+  Database nextStep;
 
 };
 
@@ -345,16 +348,33 @@ else{
   throw(tokStack.back());
 }
 Transfer();
+Factor();
+Querator();
 }
 string datalog::test(unsigned int j){
   return tokStack.at(j).PrintToken();
 }
-
-
+void datalog:: Querator(){
+  vector<string> lister;
+  string name;
+  for(unsigned int x =0; x <Factss.size(); x++){
+    lister = Queriess.at(x).allParams();
+    name = Queriess.at(x).getID();
+    nextStep.EvalQuery(name,lister);
+  }
+}
+void datalog::Factor(){
+  vector<string> lister;
+  string name;
+  for(unsigned int x =0; x <Factss.size(); x++){
+    lister = Factss.at(x).allParams();
+    name = Factss.at(x).getID();
+    nextStep.AddFact(name,lister);
+  }
+}
 
 void datalog::Transfer(){
-  Database nextStep;
-  nextStep.practice();
+  //Database nextStep;
   for(unsigned i =0; i < Schemess.size(); i++){
     vector<string> lister;
     string name;
@@ -363,13 +383,7 @@ void datalog::Transfer(){
     nextStep.AddRelation(name,lister);
 
   }
-
-
-
-
-
-
-
-
+  nextStep.Start();
 }
+
 #endif /* DATALOG_CPP*/

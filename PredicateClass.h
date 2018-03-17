@@ -23,7 +23,7 @@ string PredicateClass::getID(){
 vector<string> PredicateClass::allParams(){
   vector<string> paramer;
   for(unsigned i =0; i <list.size(); i++){
-    cout << "adding " << list.at(i).GetString();
+    
     paramer.push_back(list.at(i).GetString());
   }
   return paramer;
