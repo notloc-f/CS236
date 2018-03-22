@@ -531,7 +531,7 @@ void EndCheck(){
 void Parser(){
 	vector<Token> TokInverted;
 	while(!Tokens.empty()){
-		if(Tokens.back().Type()==COMMENT){
+		if((Tokens.back().Type()==COMMENT) ||(Tokens.back().Type()==UNDEFINED)){
 			Tokens.pop_back();
 		}
 		else{
@@ -540,7 +540,18 @@ void Parser(){
 	}
 	}
 
+	// for(unsigned int x=0; x < TokInverted.size(); x++){
+	// 	if(TokInverted.at(x).Type()==UNDEFINED){
+	// 		cout << "erasing" << TokInverted.at(x).PrintToken() << endl;
+	// 		TokInverted.erase(TokInverted.begin(),TokInverted.begin() +x);
+	// 	}
+	// }
+	// cout << "TOkINVERTED SIZE " << TokInverted.size();
+	// for(unsigned int x=0; x < TokInverted.size(); x++){
+	// 	cout << TokInverted.at(x).PrintToken() << endl;
+	// }
 	datalog sorter(TokInverted);
+
 	try{
 	sorter.Begin();
 	}

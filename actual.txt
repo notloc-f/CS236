@@ -1,0 +1,53 @@
+NEW QUERY  ab
+Comparing 'joe'
+'joe' and 'bob' Erased
+
+'joe' and 'jim' Erased
+
+'joe' and 'joe'
+'joe' and 'joe'
+Comparing 'jim'
+'jim' and 'bob' Erased
+
+'jim' and 'jim'
+ SIZE OF THIS Adder is 1
+NEW QUERY  ab
+Comparing who
+COMPARING who and 'bob'
+Comparing 'bob'
+'bob' and 'bob'
+'bob' and 'bob'
+'bob' and 'bob'
+'bob' and 'jim' Erased
+
+'bob' and 'bob'
+ SIZE OF THIS Adder is 3
+NEW QUERY  ab
+Comparing 'joe'
+'joe' and 'bob' Erased
+
+'joe' and 'jim' Erased
+
+'joe' and 'joe'
+'joe' and 'joe'
+Comparing anyone
+ SIZE OF THIS Adder is 1
+NEW QUERY  ab
+Comparing X
+COMPARING X and X
+They da same
+'bob' and 'bob'
+'jim' and 'bob'
+erased
+'joe' and 'bob'
+erased
+'bob' and 'bob'
+'joe' and 'jim'
+erased
+Comparing X
+ SIZE OF THIS Adder is 1
+NEW QUERY  ab
+Comparing X
+COMPARING X and Y
+Comparing Y
+ SIZE OF THIS Adder is 3

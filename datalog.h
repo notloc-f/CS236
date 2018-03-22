@@ -18,6 +18,7 @@ class datalog{
 public:
   datalog();
   datalog(vector<Token> intial);
+  void Fix();
   string ToString();
   void Querator();
   void Factor();
@@ -266,6 +267,9 @@ void datalog::operators(){
   }
 }
 void datalog::Match(TOLKTYP typer){
+  // if(tokStack.back().Type()== UNDEFINED){
+  //   tokStack.pop_back();
+  // }
   if(typer == tokStack.back().Type()){
     tokStack.pop_back();
     return;
@@ -329,6 +333,15 @@ vector<ParameterClass> temp = Factss.at(i).GetPred();
   }
 }
 }
+void datalog::Fix(){
+//  int temp= tokStack.size();
+  for(unsigned int x=0; x < tokStack.size(); x++){
+    if(tokStack.at(x).Type()==UNDEFINED){
+      cout << "erasing" << tokStack.at(x).PrintToken() << endl;
+      tokStack.erase(tokStack.begin(),tokStack.begin() +x);
+    }
+  }
+}
 void datalog::Begin(){
 if(tokStack.back().Type()==SCHEMES){
   Match(SCHEMES);Match(COLON);scheme();schemeList();
@@ -336,11 +349,11 @@ if(tokStack.back().Type()==SCHEMES){
   Match(RULES);Match(COLON);ruleList();
   Match(QUERIES); Match(COLON);query();queryList();
   End();
-  cout <<"Success!"<< endl; //<< ToString();
+//  cout <<"Success!"<< endl; //<< ToString();
   MakeDomain();
   ofstream outter;
   outter.open("outfile2.txt");
-  outter <<"Success!"<< endl << "  "<< ToString() << endl;
+  //outter <<"Success!"<< endl << "  "<< ToString() << endl;
   outter.close();
 }
 else{
@@ -350,6 +363,8 @@ else{
 Transfer();
 Factor();
 Querator();
+//nextStep.Start();
+
 }
 string datalog::test(unsigned int j){
   return tokStack.at(j).PrintToken();
@@ -357,7 +372,7 @@ string datalog::test(unsigned int j){
 void datalog:: Querator(){
   vector<string> lister;
   string name;
-  for(unsigned int x =0; x <Factss.size(); x++){
+  for(unsigned int x =0; x <Queriess.size(); x++){
     lister = Queriess.at(x).allParams();
     name = Queriess.at(x).getID();
     nextStep.EvalQuery(name,lister);
@@ -383,7 +398,6 @@ void datalog::Transfer(){
     nextStep.AddRelation(name,lister);
 
   }
-  nextStep.Start();
 }
 
 #endif /* DATALOG_CPP*/
