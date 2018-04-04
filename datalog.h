@@ -23,6 +23,8 @@ public:
   void Querator();
   void Factor();
   void Transfer();
+  void Ruler();
+  void RuleFactor();
   void Begin();
   void Match(TOLKTYP typy);
   string test(unsigned int i);
@@ -362,6 +364,7 @@ else{
 }
 Transfer();
 Factor();
+Ruler();
 Querator();
 //nextStep.Start();
 
@@ -399,5 +402,19 @@ void datalog::Transfer(){
 
   }
 }
-
+void datalog::Ruler(){
+  vector<string> headlister;
+  string headname;
+  vector<vector<string>> lists;
+  vector<string> names;
+  for(unsigned int x =0; x <Ruless.size();x++){
+    headname =Ruless.at(x).returnHead().getID();
+    headlister = Ruless.at(x).returnHead().allParams();
+    for(unsigned int i=0; i <Ruless.at(x).returnParams().size();i++){
+      names.push_back(Ruless.at(x).returnParams().at(i).getID());
+      lists.push_back(Ruless.at(x).returnParams().at(i).allParams());
+    }
+    nextStep.test(headname,headlister,names,lists);
+  }
+}
 #endif /* DATALOG_CPP*/

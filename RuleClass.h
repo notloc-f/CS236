@@ -12,6 +12,8 @@ void ModHead(PredicateClass moddy);
 void Clear();
 void AddPred(PredicateClass modis);
 string PrintRule();
+PredicateClass returnHead();
+vector<PredicateClass> returnParams();
 private:
   PredicateClass head;
   vector<PredicateClass> params;
@@ -46,5 +48,11 @@ void RuleClass::Clear(){
 }
 void RuleClass::AddPred(PredicateClass modis){
 params.push_back(modis);
+}
+PredicateClass RuleClass::returnHead(){
+  return head;
+}
+vector<PredicateClass> RuleClass::returnParams(){
+  return params;
 }
 #endif

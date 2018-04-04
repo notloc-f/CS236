@@ -1,53 +1,20 @@
-NEW QUERY  ab
-Comparing 'joe'
-'joe' and 'bob' Erased
-
-'joe' and 'jim' Erased
-
-'joe' and 'joe'
-'joe' and 'joe'
-Comparing 'jim'
-'jim' and 'bob' Erased
-
-'jim' and 'jim'
- SIZE OF THIS Adder is 1
-NEW QUERY  ab
-Comparing who
-COMPARING who and 'bob'
-Comparing 'bob'
-'bob' and 'bob'
-'bob' and 'bob'
-'bob' and 'bob'
-'bob' and 'jim' Erased
-
-'bob' and 'bob'
- SIZE OF THIS Adder is 3
-NEW QUERY  ab
-Comparing 'joe'
-'joe' and 'bob' Erased
-
-'joe' and 'jim' Erased
-
-'joe' and 'joe'
-'joe' and 'joe'
-Comparing anyone
- SIZE OF THIS Adder is 1
-NEW QUERY  ab
-Comparing X
-COMPARING X and X
-They da same
-'bob' and 'bob'
-'jim' and 'bob'
-erased
-'joe' and 'bob'
-erased
-'bob' and 'bob'
-'joe' and 'jim'
-erased
-Comparing X
- SIZE OF THIS Adder is 1
-NEW QUERY  ab
-Comparing X
-COMPARING X and Y
-Comparing Y
- SIZE OF THIS Adder is 3
+snap(Id,'Snoopy',A,P)? Yes(1)
+  Id='33333', A='12 Apple St.', P='555-1234'
+csg(Course,'33333',Grade)? Yes(2)
+  Course='CS101', Grade='A-'
+  Course='EE200', Grade='B'
+cp(Course,'CS100')? Yes(2)
+  Course='CS101'
+  Course='EE200'
+cdh('EE200',Day,Hour)? Yes(3)
+  Day='F', Hour='10AM'
+  Day='M', Hour='10AM'
+  Day='W', Hour='1PM'
+cr('CS101',Room)? Yes(1)
+  Room='Turing Aud.'
+tthCourses(C)? No
+before('CS100','CS206')? No
+before('CS100',prerequisiteTo)? No
+Schedule('Snoopy',C,R,D,H)? No
+Grades('Snoopy',C,G)? No
+Students('CS101',R,N,G)? No

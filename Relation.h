@@ -1,6 +1,6 @@
 #ifndef RELATION_H_
 #define RELATION_H_
-
+#include<map>
 class Relation{
 public:
 Relation();
@@ -11,17 +11,56 @@ void SpecSelect(int pos, string value);
 void DupSelect(int first, int second);
 void Project(set<int> lister);
 void Rename(vector<string> lister);
+string Fixer(string toFix);
 string Printer(vector<int> IDspots);
 string PrintAll();
 string Extra();
 int tupleSize();
+Schemes getScheme();
+set<Tuples> getTuples();
 void Rename();
+void Join(Relation adder);
+map<unsigned int,unsigned int> SchemeChange(Relation temp);
 private:
   string name;
   Schemes Schemer;
   set<Tuples> Tupler;
 
 };
+void Relation::Join(Relation toAdd){
+SchemeChange(toAdd);
+}
+
+map<unsigned int, unsigned int> Relation::SchemeChange(Relation toAdd){
+map<unsigned int, unsigned int> temp_Scheme;
+bool found=false;
+Schemes temp = toAdd.getScheme();
+unsigned int size_Schemer = (unsigned int)Schemer.size();
+for(unsigned int x=0; x < temp.size(); x++){
+  for(unsigned int i=0; i <size_Schemer; i++){
+    if(Schemer.at(i)==temp.at(x)){
+      found =true;
+      temp_Scheme.insert(pair<unsigned int,unsigned int>(x,i));
+      cout << "Found at Schemer "<<i << " and temp "<<x << endl;
+    }
+  }
+  if(found){
+    found = false;
+  }
+  else{
+    Schemer.push_back(temp.at(x));
+  }
+}
+return temp_Scheme;
+}
+
+
+set<Tuples> Relation::getTuples(){
+  return Tupler;
+}
+Schemes Relation::getScheme(){
+  return Schemer;
+}
 Relation::Relation(){
 
 }
@@ -30,23 +69,6 @@ int Relation::tupleSize(){
 }
 string Relation::Printer(vector<int> IDspots){
   ostringstream blah;
-
-  // for(unsigned int x=0; x<Schemer.size(); x++){
-  //   if((x +1) ==Schemer.size()){
-  //     blah << Schemer.at(x) << ")? ";
-  //     if(Tupler.size()== 0){
-  //       blah <<"No" << endl;
-  //       return blah.str();
-  //     }
-  //     else{
-  //       blah <<"Yes(" <<Tupler.size()<<")";
-  //     }
-  //   }
-  //   else{
-  //   blah << Schemer.at(x) << ",";
-  // }
-  // }
-
   blah << Extra();
 
   blah << endl;
@@ -55,17 +77,10 @@ string Relation::Printer(vector<int> IDspots){
        if(x==0){
          blah << "  ";
        }
-//Last spot
-    //   cout <<"temper" << temper <<"temper"<< endl;
-
        blah <<Schemer.at((IDspots.at(x)));
-       // cout << "Made it here" << endl;
-       // cout << "IDspot is " << IDspots.at(x) << endl;
-       // cout << "Number of indices in *it " << (*it).size() << endl;
-       // return blah.str();
-    blah   << "=" <<(*it).at(IDspots.at(x));
+       blah   << "=" <<(*it).at(IDspots.at(x));
 
-       if(Tupler.size()==1){
+       if((Tupler.size()==1) && (IDspots.size()== x+1)){
         blah << endl;
          return blah.str();
        }
@@ -76,16 +91,17 @@ string Relation::Printer(vector<int> IDspots){
      if(IDspots.size() != 0){
      blah << endl;
    }
-
-  //    if(Tupler.size()!=1){
-  //  blah <<endl;
-  // }
    }
    string tempor = blah.str();
-   if(tempor.at(tempor.size()-2) == '\n'){
-     tempor.resize(tempor.size()-1);
-   }
+   tempor = Fixer(tempor);
    return tempor;
+}
+string Relation::Fixer(string toFix){
+string toReturn = toFix;
+if(toReturn.at(toReturn.size()-2) == '\n'){
+  toReturn.resize(toReturn.size()-1);
+}
+  return toReturn;
 }
 string Relation:: Extra(){
   ostringstream blah;
@@ -126,19 +142,28 @@ void Relation::Initial(string namely, vector<string> lister){
 
     Tupler.insert(tumple);
   }
+  // void Relation::SpecSelect(int pos, string value){
+  //   Tuples temp;
+  //   set<Tuples> tempSet;
+  //   for(set<Tuples>::iterator it= Tupler.begin(); it!=Tupler.end(); ++it){
+  //     if(((*it).at(pos)!=value) && ((*it).at(pos)[0]=='\'')){                             //NOTE YOU WILL NEED TO MODIFY THIS TO ALLOW FOR VARIABLES
+  //       Tupler.erase(it);
+  //     }
+  //     else {
+  //       cout << endl;
+  //     }
+  //   }
+  // }
   void Relation::SpecSelect(int pos, string value){
-    Tuples temp;
     set<Tuples> tempSet;
     for(set<Tuples>::iterator it= Tupler.begin(); it!=Tupler.end(); ++it){
-      cout <<value << " and " <<(*it).at(pos);
-      if(((*it).at(pos)!= value) && ((*it).at(pos)[0]=='\'')){                             //NOTE YOU WILL NEED TO MODIFY THIS TO ALLOW FOR VARIABLES
-        Tupler.erase(it);
-        cout << " Erased" <<endl;
+      if(((*it).at(pos)==value) && ((*it).at(pos)[0]=='\'')){                             //NOTE YOU WILL NEED TO MODIFY THIS TO ALLOW FOR VARIABLES
+        tempSet.insert(*it);
       }
       else {
       }
-      cout << endl;
     }
+    Tupler = tempSet;
   }
 //   void Relation::SpecSelect(int pos, string value){
 //     Tuples temp;
@@ -152,13 +177,15 @@ void Relation::Initial(string namely, vector<string> lister){
 //   }
 // }
   void Relation::DupSelect(int first, int second){
+    //    cout << "Prior dup select size: " << Tupler.size() << endl;
       for(set<Tuples>::iterator it= Tupler.begin(); it!=Tupler.end(); ++it){
-        cout << (*it).at(first) << " and " << (*it).at(second) << endl;
+    //    cout << (*it).at(first) << " and " << (*it).at(second) << endl;
         if((*it).at(first) != (*it).at(second)){
-          cout << "erased"<<endl;
+      //    cout << "erased"<<endl;
           Tupler.erase(it);
         }
       }
+        //  cout << "After spec select size: " << Tupler.size() << endl;
   }
   void Relation::Rename(vector<string> lister) {
     Schemes temp;
@@ -170,25 +197,6 @@ void Relation::Initial(string namely, vector<string> lister){
   void Relation::Project(set<int> lister){
     set<Tuples> tempSet;
     Tuples tempTuple;
-
-    // ostringstream blah;
-    // blah <<name << "(";
-    // for(unsigned int x=0; x<Schemer.size(); x++){
-    //   if((x +1) ==Schemer.size()){
-    //     blah << Schemer.at(x) << ")? ";
-    //     if(Tupler.size()== 0){
-    //       blah <<"No" << endl;
-    //     }
-    //     else{
-    //       blah <<"Yes(" <<Tupler.size() <<")" << endl;
-    //     }
-    //   }
-    //   else{
-    //   blah << Schemer.at(x) << ",";
-    // }
-    // }
-    // cout << blah.str();
-
   unsigned int toIterate= lister.size() +1;
     for(set<Tuples>::iterator it= Tupler.begin(); it!=Tupler.end(); ++it){
       for(unsigned int x=0; x < toIterate; x++){
@@ -198,7 +206,6 @@ void Relation::Initial(string namely, vector<string> lister){
         }
       }
       if(Tupler.size() >1){
-  //    cout << endl;
       }
       tempSet.insert(tempTuple);
       tempTuple.clear();
