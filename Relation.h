@@ -6,12 +6,14 @@ public:
 Relation();
 Relation(string namer, vector<string> list);
 Relation(string namer,Schemes schemely, set<Tuples>tupling);
+void Setter(string namer,Schemes schemely);
 void Initial(string namely, vector<string> lister);
 void AddTuple(Tuples adder);
 void SpecSelect(int pos, string value);
 void DupSelect(int first, int second);
 void Project(set<int> lister);
 void Rename(vector<string> lister);
+Tuples Add(map<unsigned int,unsigned int> mapper,Tuples add, Tuples modify);
 string Fixer(string toFix);
 string Printer(vector<int> IDspots);
 string PrintAll();
@@ -21,8 +23,9 @@ int tupleSize();
 Schemes getScheme();
 set<Tuples> getTuples();
 void Rename();
+Relation Fill(string namer, Schemes schemely, Tuples tupler, Tuples toAdd);
 string getTupleString(Tuples temp);
-void Join(Relation adder);
+Relation Join(Relation adder);
 map<unsigned int,unsigned int> SchemeChange(Relation temp);
 private:
   string name;
@@ -30,6 +33,10 @@ private:
   set<Tuples> Tupler;
 
 };
+void Relation::Setter(string namer,Schemes schemely){
+  name = namer;
+  Schemer = schemely;
+}
 string Relation::getTupleString(Tuples temp){
   ostringstream out;
   out << "(";
@@ -39,19 +46,66 @@ string Relation::getTupleString(Tuples temp){
   out << ")";
   return out.str();
 }
-void Relation::Join(Relation toAdd){
+Relation Relation::Fill(string namer, Schemes schemely, Tuples tupler, Tuples toAdd){
+  Tuples temp;
+  Relation toReturn;
+   for(set<Tuples>::iterator it_Tupler= tupler.begin(); it_Tupler!=tupler.end(); ++it_Tupler){
+  //   for(set<Tuples>::iterator it_toAdd= toAdd.begin(); it_toAdd!=toAdd.end(); ++it_toAdd){
+  //     temp = *it_Tupler;
+  //     temp.insert(temp.end(),(*it_toAdd).begin(),(*it_toAdd).end());
+  //     toReturn.AddTuple(temp);
+  //     temp.clear();
+  //
+  //   }
+   }
+  toReturn.Setter(namer,schemely);
+  return toReturn;
+}
+Relation Relation::Join(Relation toAdd){
+  Relation toReturn;
 map<unsigned int, unsigned int> temp_Scheme =SchemeChange(toAdd);
 set<Tuples> toAdd_Tuples = toAdd.getTuples();
- for (map<unsigned int,unsigned int>::iterator it=temp_Scheme.begin(); it!=temp_Scheme.end(); ++it){ // GOES THROUGH ALL SPOTS WITH THE SAME VARIABLES
+// if(toAdd_Tuples.empty()){
+//   cout << "Empty" << endl;
+//   toReturn = Fill(name,Schemer,Tupler,toAdd_Tuples);
+//   return toReturn;
+// }
+bool canAdd = false;
    for(set<Tuples>::iterator it_Tupler= Tupler.begin(); it_Tupler!=Tupler.end(); ++it_Tupler){
      for(set<Tuples>::iterator it_toAdd= toAdd_Tuples.begin(); it_toAdd!=toAdd_Tuples.end(); ++it_toAdd){
+        for (map<unsigned int,unsigned int>::iterator it=temp_Scheme.begin(); it!=temp_Scheme.end(); ++it){
        if((*it_Tupler).at(it->second) == (*it_toAdd).at(it->first)){
-        cout << "Adding" << getTupleString((*it_toAdd)) << endl;
+         canAdd = true;
        }
-     } //GOES THROUGH ALL TUPLES IN toADD
-   } //GOES THROUGH ALL TUPLES IN EXISTING SET
+       else{
+         canAdd = false;
+         break;
+       }
+     }
+     if(canAdd){
+      //   cout << "Adding" << getTupleString((*it_toAdd)) << endl;
+         Tuples change = Add(temp_Scheme,(*it_toAdd),(*it_Tupler));
+        // cout << endl << "Tuple added" << endl << "(";
+         // for(unsigned int x=0; x <change.size();x++){
+         //   cout << change.at(x) << ",";
+         // }
+         // cout << ")" << endl;
+         toReturn.AddTuple(change);
+         canAdd = false;
+     }
+   }
  }
-
+toReturn.Setter(name,Schemer);
+return toReturn;
+ }
+ Tuples Relation::Add(map<unsigned int,unsigned int> mapper,Tuples add, Tuples modify){
+   for(unsigned int x=0; x < add.size();x++){
+     if(mapper.find(x)== mapper.end()){
+    //   cout << "Inserting: " << add.at(x);
+       modify.push_back(add.at(x));
+     }
+   }
+   return modify;
  }
 Relation::Relation(string namer,Schemes schemely, set<Tuples>tupling){
   name = namer;

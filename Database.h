@@ -31,7 +31,7 @@ if(lists.size() >1){
   cout << "JOINING!" << endl;
   Relation second;
   second = EvalQuery(names[1],lists[1]);
-  first.Join(second);
+  first =first.Join(second);
 }
 
 // Make first name and list a relation, evaluate it as a query, then use a for() loop to
