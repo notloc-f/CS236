@@ -414,7 +414,7 @@ void datalog::Ruler(){
       names.push_back(Ruless.at(x).returnParams().at(i).getID());
       lists.push_back(Ruless.at(x).returnParams().at(i).allParams());
     }
-    nextStep.test(headname,headlister,names,lists);
+    nextStep.RuleEval(headname,headlister,names,lists);
   }
 }
 #endif /* DATALOG_CPP*/

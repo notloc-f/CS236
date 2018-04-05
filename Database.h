@@ -13,6 +13,7 @@ void AddRelation(string namer, vector<string> lister);
 void AddFact(string namer,vector<string> help);
 Relation EvalQuery(string namer, vector<string> helper);
 Relation Projecter(Relation changeable);
+void RuleEval(string head_name, vector<string> head_list,vector<string> names,vector<vector<string>> lists);
 void test(string name, vector<string> lister,vector<string> names,vector<vector<string>> listers);
 private:
 
@@ -24,9 +25,29 @@ Relation Database::Projecter(Relation toChange){
 
 return projected;
 }
+void Database::RuleEval(string head_name, vector<string> head_list,vector<string> names,vector<vector<string>> lists){
+Relation first = EvalQuery(names[0],lists[0]);
+if(lists.size() >1){
+  cout << "JOINING!" << endl;
+  Relation second;
+  second = EvalQuery(names[1],lists[1]);
+  first.Join(second);
+}
+
+// Make first name and list a relation, evaluate it as a query, then use a for() loop to
+// join all other lists to that relation by calling "EvalQuery" and then
+// joining the resultant returned relation.
+// Lastly, take the resultant full relation and project it to a new relation
+// of head_name and projecting columns in the order given in the head_list..
+// Finally, once that is working, add in a handshake to tell datalog if  more
+// facts were added at any point, if so then you will need to reevaluate all of
+// the rules again and count how many times you do so.
+
+
+}
 void Database::test(string head_name, vector<string> head_list,vector<string> names,vector<vector<string>> lists){
 Relation Rule;
-Relation
+
 for(unsigned int x=0; x < lists.size();x++){
 
 }

@@ -5,6 +5,7 @@ class Relation{
 public:
 Relation();
 Relation(string namer, vector<string> list);
+Relation(string namer,Schemes schemely, set<Tuples>tupling);
 void Initial(string namely, vector<string> lister);
 void AddTuple(Tuples adder);
 void SpecSelect(int pos, string value);
@@ -15,10 +16,12 @@ string Fixer(string toFix);
 string Printer(vector<int> IDspots);
 string PrintAll();
 string Extra();
+Relation Projecting(vector<int> IDspots);
 int tupleSize();
 Schemes getScheme();
 set<Tuples> getTuples();
 void Rename();
+string getTupleString(Tuples temp);
 void Join(Relation adder);
 map<unsigned int,unsigned int> SchemeChange(Relation temp);
 private:
@@ -27,8 +30,33 @@ private:
   set<Tuples> Tupler;
 
 };
+string Relation::getTupleString(Tuples temp){
+  ostringstream out;
+  out << "(";
+  for(unsigned int x=0; x < temp.size();x++){
+    out << temp.at(x) << ",";
+  }
+  out << ")";
+  return out.str();
+}
 void Relation::Join(Relation toAdd){
-SchemeChange(toAdd);
+map<unsigned int, unsigned int> temp_Scheme =SchemeChange(toAdd);
+set<Tuples> toAdd_Tuples = toAdd.getTuples();
+ for (map<unsigned int,unsigned int>::iterator it=temp_Scheme.begin(); it!=temp_Scheme.end(); ++it){ // GOES THROUGH ALL SPOTS WITH THE SAME VARIABLES
+   for(set<Tuples>::iterator it_Tupler= Tupler.begin(); it_Tupler!=Tupler.end(); ++it_Tupler){
+     for(set<Tuples>::iterator it_toAdd= toAdd_Tuples.begin(); it_toAdd!=toAdd_Tuples.end(); ++it_toAdd){
+       if((*it_Tupler).at(it->second) == (*it_toAdd).at(it->first)){
+        cout << "Adding" << getTupleString((*it_toAdd)) << endl;
+       }
+     } //GOES THROUGH ALL TUPLES IN toADD
+   } //GOES THROUGH ALL TUPLES IN EXISTING SET
+ }
+
+ }
+Relation::Relation(string namer,Schemes schemely, set<Tuples>tupling){
+  name = namer;
+  Schemer = schemely;
+  Tupler = tupling;
 }
 
 map<unsigned int, unsigned int> Relation::SchemeChange(Relation toAdd){
@@ -240,5 +268,46 @@ void Relation::Initial(string namely, vector<string> lister){
  return blah.str();
 }
   void Relation::Rename(){}
+
+
+
+  Relation Relation::Projecting(vector<int> IDspots){
+    Relation projected;
+    Schemes tempScheme;
+    set<Tuples> tempTupleSet;
+    Tuples tempTuple;
+    string tempName;
+    ostringstream blah;
+    blah << Extra();
+
+    blah << endl;
+     for(set<Tuples>::iterator it= Tupler.begin(); it!=Tupler.end(); ++it){
+       tempTuple.clear();
+       for(unsigned int x=0; x <IDspots.size();x++){
+         if(x==0){
+           blah << "  ";
+         }
+         blah <<Schemer.at((IDspots.at(x)));
+         blah   << "=" <<(*it).at(IDspots.at(x));
+         tempTuple.push_back((*it).at(IDspots.at(x)));
+
+         if((Tupler.size()==1) && (IDspots.size()== x+1)){
+          blah << endl;
+           ///////////////////////////////////////////////////////
+         }
+         if(x != (IDspots.size()-1)){
+           blah <<", ";
+         }
+       }
+       tempTupleSet.insert(tempTuple);
+       if(IDspots.size() != 0){
+       blah << endl;
+     }
+
+     }
+     string tempor = blah.str();
+     tempor = Fixer(tempor);
+     return projected;
+  }
 
 #endif
