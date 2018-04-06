@@ -6,9 +6,11 @@
 #include "Relation.h"
 #include <map>
 #include <set>
+//#include "Scheme.h"
 class Database {
 public:
 void Start();
+vector<int> Projecthelp(vector<string> toProject, Schemes all);
 void AddRelation(string namer, vector<string> lister);
 void AddFact(string namer,vector<string> help);
 Relation EvalQuery(string namer, vector<string> helper);
@@ -25,14 +27,42 @@ Relation Database::Projecter(Relation toChange){
 
 return projected;
 }
-void Database::RuleEval(string head_name, vector<string> head_list,vector<string> names,vector<vector<string>> lists){
-Relation first = EvalQuery(names[0],lists[0]);
-if(lists.size() >1){
-  cout << "JOINING!" << endl;
-  Relation second;
-  second = EvalQuery(names[1],lists[1]);
-  first =first.Join(second);
+vector<int> Database::Projecthelp(vector<string> toProject, Schemes all){
+  vector<int> idSpots;
+for(unsigned int x = 0; x < toProject.size(); x++){
+  for(unsigned int i=0; i < all.size(); i++){
+    if(toProject.at(x)==all.at(i)){
+  //    cout << "Found spot" << endl;
+      idSpots.push_back(i);
+    }
+  }
 }
+return idSpots;
+}
+void Database::RuleEval(string head_name, vector<string> head_list,vector<string> names,vector<vector<string>> lists){
+//  cout << "NEW rule" << endl;
+Relation first = EvalQuery(names[0],lists[0]);
+for(unsigned int x=1; x < lists.size(); x++){
+  //cout << "JOINING!" << names.at(x) << endl;
+  Relation second;
+  second = EvalQuery(names[x],lists[x]);
+  first =first.Join(second);
+
+}
+Relation addling = first.Projecting(Projecthelp(head_list,first.getScheme()),head_name,head_list );
+
+//cout << first.PrintAll() << endl;
+
+
+//cout <<first.Extrar(head_list,head_name);
+//set<Tuples> tempTupler = first.getTuples();
+//cout <<first.Printer(Projecthelp(head_list,first.getScheme()));
+//Relation toReplace =first.Projecting(Projecthelp(head_list, first.getScheme()));
+//first.Renamer(head_list,head_name);
+// first.Renamer(head_list,head_name);
+// Schemes temper = first.getScheme
+// cout << first.Printer(Projecthelp(head_list, first.getScheme()));
+// first.
 
 // Make first name and list a relation, evaluate it as a query, then use a for() loop to
 // join all other lists to that relation by calling "EvalQuery" and then
@@ -86,7 +116,7 @@ Relation Database:: EvalQuery(string namer, vector<string> comparer){
 }
 toAdd.Rename(comparer);
 tempor.push_back(toAdd);
-cout << toAdd.Printer(IDspots);
+//cout << toAdd.Printer(IDspots);
 return toAdd;
 }
 void Database::AddRelation(string name, vector<string> list){

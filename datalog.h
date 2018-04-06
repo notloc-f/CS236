@@ -407,14 +407,19 @@ void datalog::Ruler(){
   string headname;
   vector<vector<string>> lists;
   vector<string> names;
+  cout << "Rule Evaluation" << endl;
   for(unsigned int x =0; x <Ruless.size();x++){
+    cout << Ruless.at(x).PrintRule();
     headname =Ruless.at(x).returnHead().getID();
     headlister = Ruless.at(x).returnHead().allParams();
+  //  cout <<"NUMBER OF PARAMS " << Ruless.at(x).returnParams().size() << endl;
     for(unsigned int i=0; i <Ruless.at(x).returnParams().size();i++){
       names.push_back(Ruless.at(x).returnParams().at(i).getID());
       lists.push_back(Ruless.at(x).returnParams().at(i).allParams());
     }
     nextStep.RuleEval(headname,headlister,names,lists);
+    lists.clear();
+    names.clear();
   }
 }
 #endif /* DATALOG_CPP*/

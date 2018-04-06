@@ -18,12 +18,14 @@ string Fixer(string toFix);
 string Printer(vector<int> IDspots);
 string PrintAll();
 string Extra();
-Relation Projecting(vector<int> IDspots);
+string Extrar(vector<string> listers, string namer);
+void Renamer(vector<string> lister,string namer);
+Relation Projecting(vector<int> IDspots, string head, vector<string> head_list);
 int tupleSize();
 Schemes getScheme();
 set<Tuples> getTuples();
 void Rename();
-Relation Fill(string namer, Schemes schemely, Tuples tupler, Tuples toAdd);
+Relation Fill(string namer, Schemes schemely, set<Tuples> tupler, set<Tuples> toAdd);
 string getTupleString(Tuples temp);
 Relation Join(Relation adder);
 map<unsigned int,unsigned int> SchemeChange(Relation temp);
@@ -33,6 +35,7 @@ private:
   set<Tuples> Tupler;
 
 };
+
 void Relation::Setter(string namer,Schemes schemely){
   name = namer;
   Schemer = schemely;
@@ -46,30 +49,40 @@ string Relation::getTupleString(Tuples temp){
   out << ")";
   return out.str();
 }
-Relation Relation::Fill(string namer, Schemes schemely, Tuples tupler, Tuples toAdd){
+Relation Relation::Fill(string namer, Schemes schemely, set<Tuples> tupler, set<Tuples> toAdd){
   Tuples temp;
   Relation toReturn;
    for(set<Tuples>::iterator it_Tupler= tupler.begin(); it_Tupler!=tupler.end(); ++it_Tupler){
-  //   for(set<Tuples>::iterator it_toAdd= toAdd.begin(); it_toAdd!=toAdd.end(); ++it_toAdd){
-  //     temp = *it_Tupler;
-  //     temp.insert(temp.end(),(*it_toAdd).begin(),(*it_toAdd).end());
-  //     toReturn.AddTuple(temp);
-  //     temp.clear();
-  //
-  //   }
+    for(set<Tuples>::iterator it_toAdd= toAdd.begin(); it_toAdd!=toAdd.end(); ++it_toAdd){
+      temp = *it_Tupler;
+      temp.insert(temp.end(),(*it_toAdd).begin(),(*it_toAdd).end());
+      cout << "inserting: (";
+      for(unsigned int x=0; x < temp.size();x++){
+        cout << temp.at(x);
+      }
+      cout << ")" << endl;
+      toReturn.AddTuple(temp);
+      temp.clear();
+
+    }
    }
   toReturn.Setter(namer,schemely);
   return toReturn;
 }
+
+
+
+
+
 Relation Relation::Join(Relation toAdd){
   Relation toReturn;
 map<unsigned int, unsigned int> temp_Scheme =SchemeChange(toAdd);
 set<Tuples> toAdd_Tuples = toAdd.getTuples();
-// if(toAdd_Tuples.empty()){
-//   cout << "Empty" << endl;
-//   toReturn = Fill(name,Schemer,Tupler,toAdd_Tuples);
-//   return toReturn;
-// }
+if(temp_Scheme.empty()){
+  cout << "Empty" << endl;
+  toReturn = Fill(name,Schemer,Tupler,toAdd_Tuples);
+  return toReturn;
+}
 bool canAdd = false;
    for(set<Tuples>::iterator it_Tupler= Tupler.begin(); it_Tupler!=Tupler.end(); ++it_Tupler){
      for(set<Tuples>::iterator it_toAdd= toAdd_Tuples.begin(); it_toAdd!=toAdd_Tuples.end(); ++it_toAdd){
@@ -83,13 +96,13 @@ bool canAdd = false;
        }
      }
      if(canAdd){
-      //   cout << "Adding" << getTupleString((*it_toAdd)) << endl;
+        // cout << "Adding" << getTupleString((*it_toAdd)) << endl;
          Tuples change = Add(temp_Scheme,(*it_toAdd),(*it_Tupler));
         // cout << endl << "Tuple added" << endl << "(";
-         // for(unsigned int x=0; x <change.size();x++){
-         //   cout << change.at(x) << ",";
-         // }
-         // cout << ")" << endl;
+        //  for(unsigned int x=0; x <change.size();x++){
+        //    cout << change.at(x) << ",";
+        //  }
+        //  cout << ")" << endl;
          toReturn.AddTuple(change);
          canAdd = false;
      }
@@ -98,13 +111,21 @@ bool canAdd = false;
 toReturn.Setter(name,Schemer);
 return toReturn;
  }
+
+
+
+
+
+
+
  Tuples Relation::Add(map<unsigned int,unsigned int> mapper,Tuples add, Tuples modify){
    for(unsigned int x=0; x < add.size();x++){
      if(mapper.find(x)== mapper.end()){
-    //   cout << "Inserting: " << add.at(x);
+    //   cout << "Add: " << add.at(x) << endl;
        modify.push_back(add.at(x));
      }
    }
+  // cout << "Inserting: " << getTupleString(modify) << endl;
    return modify;
  }
 Relation::Relation(string namer,Schemes schemely, set<Tuples>tupling){
@@ -123,7 +144,7 @@ for(unsigned int x=0; x < temp.size(); x++){
     if(Schemer.at(i)==temp.at(x)){
       found =true;
       temp_Scheme.insert(pair<unsigned int,unsigned int>(x,i));
-      cout << "Found at Schemer "<<i << " and temp "<<x << endl;
+    //  cout << "Found at Schemer "<<i << " and temp "<<x << endl;
     }
   }
   if(found){
@@ -206,6 +227,28 @@ string Relation:: Extra(){
   string temp = blah.str();
   return temp;
 }
+string Relation:: Extrar(vector<string> newScheme,string namer){
+  ostringstream blah;
+  blah <<namer << "(";
+  for(unsigned int x=0; x<newScheme.size(); x++){
+    if((x +1) ==newScheme.size()){
+      blah << newScheme.at(x) << ")? ";
+      if(Tupler.size()== 0){
+        blah  << endl;
+        return blah.str();
+      }
+      else{
+      // blah <<"Yes(" <<Tupler.size()<<")";
+      }
+    }
+    else{
+    blah << newScheme.at(x) << ",";
+  }
+  }
+  string temp = blah.str();
+  return temp;
+}
+
 Relation::Relation(string namely, vector<string> lister){
   name = namely;
   for(unsigned int i=0; i < lister.size(); i++){
@@ -276,6 +319,15 @@ void Relation::Initial(string namely, vector<string> lister){
     }
     Schemer = temp;
   }
+  void Relation::Renamer(vector<string> lister,string namer) {
+    Schemes temp;
+    for(unsigned int x =0; x <lister.size(); x++){
+      temp.push_back(lister.at(x));
+    }
+    Schemer = temp;
+    name = namer;
+
+  }
   void Relation::Project(set<int> lister){
     set<Tuples> tempSet;
     Tuples tempTuple;
@@ -325,42 +377,84 @@ void Relation::Initial(string namely, vector<string> lister){
 
 
 
-  Relation Relation::Projecting(vector<int> IDspots){
+  // Relation Relation::Projecting(vector<int> IDspots){
+  //   Relation projected;
+  //   Schemes tempScheme;
+  //   set<Tuples> tempTupleSet;
+  //   Tuples tempTuple;
+  //   string tempName;
+  //   ostringstream blah;
+  //
+  //
+  //   cout << endl;
+  //    for(set<Tuples>::iterator it= Tupler.begin(); it!=Tupler.end(); ++it){
+  //      tempTuple.clear();
+  //      for(unsigned int x=0; x <IDspots.size();x++){
+  //        if(x==0){
+  //          cout << "  ";
+  //        }
+  //        cout <<Schemer.at((IDspots.at(x)));
+  //        cout   << "=" <<(*it).at(IDspots.at(x));
+  //        tempTuple.push_back((*it).at(IDspots.at(x)));
+  //
+  //        if((Tupler.size()==1) && (IDspots.size()== x+1)){
+  //         cout << endl;
+  //          ///////////////////////////////////////////////////////
+  //        }
+  //        if(x != (IDspots.size()-1)){
+  //          cout <<", ";
+  //        }
+  //      }
+  //      projected.AddTuple(tempTuple);
+  //      tempTupleSet.insert(tempTuple);
+  //      if(IDspots.size() != 0){
+  //      cout << endl;
+  //    }
+  //
+  //    }
+  //
+  //
+  //    return projected;
+  // }
+
+  Relation Relation::Projecting(vector<int> IDspots, string head, vector<string> head_list ){
     Relation projected;
     Schemes tempScheme;
     set<Tuples> tempTupleSet;
     Tuples tempTuple;
     string tempName;
     ostringstream blah;
-    blah << Extra();
 
-    blah << endl;
+
+    cout << endl;
      for(set<Tuples>::iterator it= Tupler.begin(); it!=Tupler.end(); ++it){
        tempTuple.clear();
        for(unsigned int x=0; x <IDspots.size();x++){
          if(x==0){
-           blah << "  ";
+           cout << "  ";
          }
-         blah <<Schemer.at((IDspots.at(x)));
-         blah   << "=" <<(*it).at(IDspots.at(x));
+         cout <<Schemer.at((IDspots.at(x)));
+         cout   << "=" <<(*it).at(IDspots.at(x));
          tempTuple.push_back((*it).at(IDspots.at(x)));
 
          if((Tupler.size()==1) && (IDspots.size()== x+1)){
-          blah << endl;
+          cout << endl;
            ///////////////////////////////////////////////////////
          }
          if(x != (IDspots.size()-1)){
-           blah <<", ";
+           cout <<", ";
          }
        }
+       projected.AddTuple(tempTuple);
        tempTupleSet.insert(tempTuple);
        if(IDspots.size() != 0){
-       blah << endl;
+       cout << endl;
      }
 
      }
-     string tempor = blah.str();
-     tempor = Fixer(tempor);
+    Schemes replacer;
+    replacer.insert(replacer.end(),head_list.begin(),head_list.end());
+     projected.Setter(head,replacer);
      return projected;
   }
 
