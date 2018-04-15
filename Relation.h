@@ -1,6 +1,7 @@
 #ifndef RELATION_H_
 #define RELATION_H_
 #include<map>
+#include <cctype>
 class Relation{
 public:
 Relation();
@@ -25,9 +26,11 @@ int tupleSize();
 Schemes getScheme();
 set<Tuples> getTuples();
 void Rename();
+void PrintRule();
 Relation Fill(string namer, Schemes schemely, set<Tuples> tupler, set<Tuples> toAdd);
 string getTupleString(Tuples temp);
 Relation Join(Relation adder);
+string getName();
 map<unsigned int,unsigned int> SchemeChange(Relation temp);
 private:
   string name;
@@ -35,7 +38,20 @@ private:
   set<Tuples> Tupler;
 
 };
+void Relation::PrintRule(){
 
+    for(set<Tuples>::iterator it= Tupler.begin(); it!=Tupler.end();++it){
+      cout << "  ";
+      for(unsigned int x =0; x < Schemer.size(); x++){
+      string temp = Schemer.at(x);
+      cout << temp << "=" << (*it).at(x);
+      if(x < Schemer.size()-1){
+        cout << ", ";
+      }
+    }
+    cout << endl;
+  }
+}
 void Relation::Setter(string namer,Schemes schemely){
   name = namer;
   Schemer = schemely;
@@ -56,11 +72,6 @@ Relation Relation::Fill(string namer, Schemes schemely, set<Tuples> tupler, set<
     for(set<Tuples>::iterator it_toAdd= toAdd.begin(); it_toAdd!=toAdd.end(); ++it_toAdd){
       temp = *it_Tupler;
       temp.insert(temp.end(),(*it_toAdd).begin(),(*it_toAdd).end());
-      cout << "inserting: (";
-      for(unsigned int x=0; x < temp.size();x++){
-        cout << temp.at(x);
-      }
-      cout << ")" << endl;
       toReturn.AddTuple(temp);
       temp.clear();
 
@@ -69,7 +80,9 @@ Relation Relation::Fill(string namer, Schemes schemely, set<Tuples> tupler, set<
   toReturn.Setter(namer,schemely);
   return toReturn;
 }
-
+string Relation::getName(){
+  return name;
+}
 
 
 
@@ -79,8 +92,9 @@ Relation Relation::Join(Relation toAdd){
 map<unsigned int, unsigned int> temp_Scheme =SchemeChange(toAdd);
 set<Tuples> toAdd_Tuples = toAdd.getTuples();
 if(temp_Scheme.empty()){
-  cout << "Empty" << endl;
+//  cout << "Empty" << endl;
   toReturn = Fill(name,Schemer,Tupler,toAdd_Tuples);
+  toReturn.Setter(name,Schemer);
   return toReturn;
 }
 bool canAdd = false;
@@ -426,29 +440,29 @@ void Relation::Initial(string namely, vector<string> lister){
     ostringstream blah;
 
 
-    cout << endl;
+//    cout << endl;
      for(set<Tuples>::iterator it= Tupler.begin(); it!=Tupler.end(); ++it){
        tempTuple.clear();
        for(unsigned int x=0; x <IDspots.size();x++){
          if(x==0){
-           cout << "  ";
+  //         cout << "  ";
          }
-         cout <<Schemer.at((IDspots.at(x)));
-         cout   << "=" <<(*it).at(IDspots.at(x));
+      //   cout <<Schemer.at((IDspots.at(x)));
+    //     cout   << "=" <<(*it).at(IDspots.at(x));
          tempTuple.push_back((*it).at(IDspots.at(x)));
 
          if((Tupler.size()==1) && (IDspots.size()== x+1)){
-          cout << endl;
+        //  cout << endl;
            ///////////////////////////////////////////////////////
          }
          if(x != (IDspots.size()-1)){
-           cout <<", ";
+      //     cout <<", ";
          }
        }
        projected.AddTuple(tempTuple);
        tempTupleSet.insert(tempTuple);
        if(IDspots.size() != 0){
-       cout << endl;
+      // cout << endl;
      }
 
      }

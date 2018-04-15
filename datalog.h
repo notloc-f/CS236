@@ -9,6 +9,8 @@
 #include "Token.h"
 #include "RuleClass.h"
 #include "Database.h"
+#include "Graph.h"
+#include "Node.h"
 //#include "ParameterClass.h"
 #include "PredicateClass.h"
 using namespace std;
@@ -52,6 +54,8 @@ public:
   void operators();
   void End();
   void MakeDomain();
+  void MakeDependency();
+  void MakeReverse();
 private:
   vector<Token> tokStack;
   string TOLKSTRING [18]={"COMMA","PERIOD","Q_MARK","LEFT_PAREN","RIGHT_PAREN","COLON","COLON_DASH","MULTIPLY","ADD","SCHEMES","FACTS",
@@ -65,6 +69,9 @@ private:
   vector<RuleClass> Ruless;
   set <string> Domainss;
   Database nextStep;
+  Graph dependency;
+  Graph reverseDepend;
+  int count=1;
 
 };
 
@@ -364,15 +371,67 @@ else{
 }
 Transfer();
 Factor();
-Ruler();
-Querator();
+MakeDependency();
+MakeReverse();
+//Ruler();
+//Querator();
 //nextStep.Start();
 
+}
+void datalog::MakeReverse(){
+  cout << "REVERSE" << endl;
+  vector<Node> nodes;
+  nodes.resize(Ruless.size());
+  map<int,Node> depGraph = dependency.getMap();
+  for(map<int,Node>::iterator it =depGraph.begin(); it!=depGraph.end(); it++){
+    set<int> temp = it->second.allLinks();
+    for(set<int>::iterator setter = temp.begin(); setter!=temp.end(); setter++){
+    cout << "Adding to R" <<*setter << " link to R" << it->first << endl;
+      nodes.at(*setter).addLink(it->first);
+      //reverseDepend.addNode(it->first,tempNode);
+    }
+  }
+  for(unsigned int x =0; x < nodes.size(); x++){
+    reverseDepend.addNode(x,nodes.at(x));
+  }
+   cout << "Reverse Dependency" << endl;
+   reverseDepend.PrintAll();
+
+}
+// void datalog::MakeReverse(){
+//   vector<Node> nodes;
+//   nodes.resize(Ruless.size());
+//   cout << "size of nodes is " << nodes.size() << endl;
+//   for(unsigned int x=0; Ruless.size(); x++){
+//     for(unsigned int i=0; Ruless.returnParams.size(); i++){
+//       nodes.at()
+//     }
+//   }
+// }
+void datalog::MakeDependency(){
+  for(unsigned int x=0; x <Ruless.size(); x++){
+  // cout << "Rule" << x << endl;
+    Node tempNode;
+    for(unsigned int i=0; i < Ruless.at(x).returnParams().size(); i++){
+    //  cout << "Param" <<i << endl;
+      for(unsigned int y=0;y < Ruless.size(); y++){
+      //  cout << "Comparing Rule"<<y << endl;
+        if(Ruless.at(y).returnHead().getID() == Ruless.at(x).returnParams().at(i).getID()){
+          tempNode.addLink(y);
+          cout << "Adding to R" << x << " link to R" << y << endl;
+        }
+      }
+      dependency.addNode(x,tempNode);
+      tempNode.clearAll();
+    }
+  }
+  dependency.PrintAll();
 }
 string datalog::test(unsigned int j){
   return tokStack.at(j).PrintToken();
 }
 void datalog:: Querator(){
+  cout << "Query Evaluation" << endl;
   vector<string> lister;
   string name;
   for(unsigned int x =0; x <Queriess.size(); x++){
@@ -403,13 +462,14 @@ void datalog::Transfer(){
   }
 }
 void datalog::Ruler(){
+  bool restart = false;
   vector<string> headlister;
   string headname;
   vector<vector<string>> lists;
   vector<string> names;
   cout << "Rule Evaluation" << endl;
   for(unsigned int x =0; x <Ruless.size();x++){
-    cout << Ruless.at(x).PrintRule();
+    cout << Ruless.at(x).PrintRule() << endl;
     headname =Ruless.at(x).returnHead().getID();
     headlister = Ruless.at(x).returnHead().allParams();
   //  cout <<"NUMBER OF PARAMS " << Ruless.at(x).returnParams().size() << endl;
@@ -417,9 +477,18 @@ void datalog::Ruler(){
       names.push_back(Ruless.at(x).returnParams().at(i).getID());
       lists.push_back(Ruless.at(x).returnParams().at(i).allParams());
     }
-    nextStep.RuleEval(headname,headlister,names,lists);
+    if(nextStep.RuleEval(headname,headlister,names,lists)){
+      restart = true;
+    }
     lists.clear();
     names.clear();
+    if( (x== Ruless.size()-1)&&restart){
+      x=-1;
+      count++;
+      restart = false;
+    }
   }
+  cout<< endl<< "Schemes populated after " <<count <<" passes through the Rules." << endl << endl;
+
 }
 #endif /* DATALOG_CPP*/

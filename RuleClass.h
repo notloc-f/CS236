@@ -27,7 +27,7 @@ string RuleClass::PrintRule(){
     output << params.at(i).PrintPredicate() <<",";
   }
   else{
-    output << params.at(i).PrintPredicate() <<".";
+    output << params.at(i).PrintPredicate();
   }
   }
   return output.str();
