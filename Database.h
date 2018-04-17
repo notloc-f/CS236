@@ -80,6 +80,7 @@ return idSpots;
 }
 bool Database::RuleEval(string head_name, vector<string> head_list,vector<string> names,vector<vector<string>> lists){
 //  cout << "NEW rule" << endl;
+
 Relation first = RuleEvalQuery(names[0],lists[0]);
 for(unsigned int x=1; x < lists.size(); x++){
   //cout << "JOINING!" << names.at(x) << endl;

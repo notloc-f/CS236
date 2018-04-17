@@ -15,7 +15,6 @@
 #include "PredicateClass.h"
 using namespace std;
 
-
 class datalog{
 public:
   datalog();
@@ -77,6 +76,7 @@ private:
   int count=1;
   vector<set<int>> order;
   int counting=0;
+  bool used = false;
 
 };
 
@@ -539,13 +539,26 @@ void datalog::Ruler(set<int>places){
     // if(finalMap.at(*it).getSelf()){
     //   cout << "I have myself" << endl;
     // }
-    if(nextStep.RuleEval(headname,headlister,names,lists) &&(places.size()>1)){
-      restart = true;
-    }
-    if(finalMap.at(*it).getSelf() && (counting == 1)){
-    //  cout << "IM in" << endl;
-      restart = true;
-    }
+    // if(nextStep.RuleEval(headname,headlister,names,lists) &&(places.size()>1)){
+    //   cout << "here1" << endl;
+    //   restart = true;
+    // }
+    // else if(finalMap.at(*it).getSelf() && (counting == 1)){
+    //   cout << "here2" << endl;
+    //   restart = true;
+    //   used = true;
+    // }
+    // else if(finalMap.at(*it).getSelf() && (!used)){
+    //   cout << "here3" << endl;
+    //   restart = true;
+    // }
+    bool tool = nextStep.RuleEval(headname,headlister,names,lists);
+  if(tool){
+    restart = true;
+  }
+  if(tool && (places.size() ==1 ) && (!(finalMap.at(*it).getSelf())) ){
+    restart = false;
+  }
     lists.clear();
     names.clear();
     // if((it.next() == places.end())&&restart){
@@ -556,10 +569,9 @@ void datalog::Ruler(set<int>places){
     // }
   }
   if(restart){
-  //  cout << "Restarting" << endl;
-    //counting++;
     Ruler(places);
   }
+  used = false;
 }
 void datalog::Finish(){
   cout << endl;
@@ -580,6 +592,7 @@ unsigned  int format =0;
     Ruler(order.at(x));
     cout << counting << " passes: ";
     counting = 0;
+
       for(set<int>::iterator it = order.at(x).begin(); it!= order.at(x).end(); it++){
         cout << "R" << *it;
         if(format != (order.at(x).size() -1)){
