@@ -12,11 +12,15 @@ public:
   bool getSelf();
   void setVisit();
   bool getVisit();
+  int getSize();
 private:
   set<int> links;
   bool visited = false;
   bool self=false;
 };
+int Node::getSize(){
+  return links.size();
+}
 set<int> Node::allLinks(){
   return links;
 }
@@ -32,14 +36,16 @@ void Node::setVisit(){
 string Node::PrintLinks(){
   ostringstream ss;
   for(set<int>::iterator it= links.begin(); it!= links.end(); it++){
-    ss << *it << " ";
+    ss <<"R" << *it << ",";
   }
+
   return ss.str();
 }
 void Node::Selfie(){
   self = true;
 }
 void Node::addLink(int newLink){
+  //cout << "ADDING " << newLink << endl;
   links.insert(newLink);
 }
 void Node::clearAll(){

@@ -56,6 +56,8 @@ public:
   void MakeDomain();
   void MakeDependency();
   void MakeReverse();
+  void Finish();
+  void Ruler(set<int> places);
 private:
   vector<Token> tokStack;
   string TOLKSTRING [18]={"COMMA","PERIOD","Q_MARK","LEFT_PAREN","RIGHT_PAREN","COLON","COLON_DASH","MULTIPLY","ADD","SCHEMES","FACTS",
@@ -71,7 +73,10 @@ private:
   Database nextStep;
   Graph dependency;
   Graph reverseDepend;
+  map<int,Node> finalMap;
   int count=1;
+  vector<set<int>> order;
+  int counting=0;
 
 };
 
@@ -374,33 +379,40 @@ Factor();
 MakeDependency();
 MakeReverse();
 reverseDepend.DepthFirst();
+dependency.SSC(reverseDepend.getStack());
+order =dependency.getSSC();
+//dependency.PrintSSC();
+finalMap = dependency.getMap();
+Finish();
+cout << endl;
 //Ruler();
-//Querator();
+Querator();
 //nextStep.Start();
 
 }
 void datalog::MakeReverse(){
-  cout << "REVERSE" << endl;
+//  cout << "REVERSE" << endl;
   vector<Node> nodes;
   nodes.resize(Ruless.size());
   map<int,Node> depGraph = dependency.getMap();
   for(map<int,Node>::iterator it =depGraph.begin(); it!=depGraph.end(); it++){
     set<int> temp = it->second.allLinks();
     for(set<int>::iterator setter = temp.begin(); setter!=temp.end(); setter++){
-    cout << "Adding to R" <<*setter << " link to R" << it->first << endl;
+  //  cout << "Adding to R" <<*setter << " link to R" << it->first << endl;
       nodes.at(*setter).addLink(it->first);
       if(*setter == it->first){
         nodes.at(*setter).Selfie();
-        cout << "Just set self 'true'" << endl;
+    //    cout << "Just set self 'true'" << endl;
       }
       //reverseDepend.addNode(it->first,tempNode);
     }
   }
   for(unsigned int x =0; x < nodes.size(); x++){ // CAN BE DELETED FOR BETTER ALGORITHM, ADD TO TOP
+
     reverseDepend.addNode(x,nodes.at(x));
   }
-   cout << "Reverse Dependency" << endl;
-   reverseDepend.PrintAll();
+  // cout << "Reverse Dependency" << endl;
+//   reverseDepend.PrintAll();
 
 }
 // void datalog::MakeReverse(){
@@ -423,17 +435,24 @@ void datalog::MakeDependency(){
       //  cout << "Comparing Rule"<<y << endl;
         if(Ruless.at(y).returnHead().getID() == Ruless.at(x).returnParams().at(i).getID()){
           tempNode.addLink(y);
-          cout << "Adding to R" << x << " link to R" << y << endl;
+  //        cout << "Adding to R" << x << " link to R" << y << endl;
           if(y == x){
             tempNode.Selfie();
-            cout << "Just set self to 'true'" << endl;
+        //    cout << "Just set self to 'true'" << endl;
           }
         }
+  //      dependency.addNode(x,tempNode);
       }
-      dependency.addNode(x,tempNode);
-      tempNode.clearAll();
+  //    cout << "About to add Node of size " << tempNode.getSize() << endl;
+  //    dependency.addNode(x,tempNode);
+//    cout << "Size of dependent " <<  dependency.getSize() << endl;
+    //ORIGINAL  tempNode.clearAll();
     }
+      dependency.addNode(x,tempNode);
+  //  tempNode.clearAll();
   }
+
+  // tempNode.clearAll();
   dependency.PrintAll();
 }
 string datalog::test(unsigned int j){
@@ -498,6 +517,78 @@ void datalog::Ruler(){
     }
   }
   cout<< endl<< "Schemes populated after " <<count <<" passes through the Rules." << endl << endl;
+}
+void datalog::Ruler(set<int>places){
+  bool restart = false;
+  vector<string> headlister;
+  string headname;
+  vector<vector<string>> lists;
+  vector<string> names;
+  counting++;
+  for(set<int>::iterator it= places.begin(); it!=places.end();it++){
 
+    //if(counting ==1){
+    cout << Ruless.at(*it).PrintRule() << endl;
+  //}
+    headname =Ruless.at(*it).returnHead().getID();
+    headlister = Ruless.at(*it).returnHead().allParams();
+    for(unsigned int i=0; i <Ruless.at(*it).returnParams().size();i++){
+      names.push_back(Ruless.at(*it).returnParams().at(i).getID());
+      lists.push_back(Ruless.at(*it).returnParams().at(i).allParams());
+    }
+    // if(finalMap.at(*it).getSelf()){
+    //   cout << "I have myself" << endl;
+    // }
+    if(nextStep.RuleEval(headname,headlister,names,lists) &&(places.size()>1)){
+      restart = true;
+    }
+    if(finalMap.at(*it).getSelf() && (counting == 1)){
+    //  cout << "IM in" << endl;
+      restart = true;
+    }
+    lists.clear();
+    names.clear();
+    // if((it.next() == places.end())&&restart){
+    //
+    //   it=places.begin();
+    //   count++;
+    //   restart = false;
+    // }
+  }
+  if(restart){
+  //  cout << "Restarting" << endl;
+    //counting++;
+    Ruler(places);
+  }
+}
+void datalog::Finish(){
+  cout << endl;
+  cout << "Rule Evaluation" << endl;
+  for(unsigned int x =0; x < order.size(); x++){
+  //  cout << "Again" << endl;
+  cout << "SCC: ";
+unsigned  int format =0;
+    for(set<int>::iterator it = order.at(x).begin(); it!= order.at(x).end(); it++){
+      cout << "R" << *it;
+      if(format != (order.at(x).size() -1)){
+        cout << ",";
+      }
+      format++;
+    }
+    format =0;
+    cout << endl;
+    Ruler(order.at(x));
+    cout << counting << " passes: ";
+    counting = 0;
+      for(set<int>::iterator it = order.at(x).begin(); it!= order.at(x).end(); it++){
+        cout << "R" << *it;
+        if(format != (order.at(x).size() -1)){
+          cout << ",";
+        }
+        format++;
+      }
+      format = 0;
+      cout << endl;
+  }
 }
 #endif /* DATALOG_CPP*/
