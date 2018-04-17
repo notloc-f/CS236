@@ -373,6 +373,7 @@ Transfer();
 Factor();
 MakeDependency();
 MakeReverse();
+reverseDepend.DepthFirst();
 //Ruler();
 //Querator();
 //nextStep.Start();
@@ -388,10 +389,14 @@ void datalog::MakeReverse(){
     for(set<int>::iterator setter = temp.begin(); setter!=temp.end(); setter++){
     cout << "Adding to R" <<*setter << " link to R" << it->first << endl;
       nodes.at(*setter).addLink(it->first);
+      if(*setter == it->first){
+        nodes.at(*setter).Selfie();
+        cout << "Just set self 'true'" << endl;
+      }
       //reverseDepend.addNode(it->first,tempNode);
     }
   }
-  for(unsigned int x =0; x < nodes.size(); x++){
+  for(unsigned int x =0; x < nodes.size(); x++){ // CAN BE DELETED FOR BETTER ALGORITHM, ADD TO TOP
     reverseDepend.addNode(x,nodes.at(x));
   }
    cout << "Reverse Dependency" << endl;
@@ -419,6 +424,10 @@ void datalog::MakeDependency(){
         if(Ruless.at(y).returnHead().getID() == Ruless.at(x).returnParams().at(i).getID()){
           tempNode.addLink(y);
           cout << "Adding to R" << x << " link to R" << y << endl;
+          if(y == x){
+            tempNode.Selfie();
+            cout << "Just set self to 'true'" << endl;
+          }
         }
       }
       dependency.addNode(x,tempNode);
